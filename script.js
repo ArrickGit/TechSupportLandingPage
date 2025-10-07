@@ -58,7 +58,7 @@
         return;
       }
       if (status) status.textContent = 'Submitting...';
-      fetch('http://localhost:8001/api/waitlist', {
+      fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.value })
@@ -85,7 +85,7 @@
       const interest = formData.get('interest');
       const price = formData.get('price');
       if (status) status.textContent = 'Submitting...';
-      fetch('http://localhost:8001/api/interest', {
+      fetch('/api/interest', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ interest, price })
@@ -108,7 +108,7 @@
     const status = document.getElementById('preorder-status');
     preorderBtn.addEventListener('click', () => {
       if (status) status.textContent = 'Submitting...';
-      fetch('http://localhost:8001/api/preorder', {
+      fetch('/api/preorder', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reserved: true })
