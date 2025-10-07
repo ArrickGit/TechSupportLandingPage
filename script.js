@@ -40,9 +40,25 @@
     });
     surveyForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (status) status.textContent = 'Thanks for your feedback!';
-      setTimeout(closeModal, 600);
-      surveyForm.reset();
+      const formData = new FormData(surveyForm);
+      const features = formData.getAll('features');
+      const feedback = formData.get('feedback');
+      if (status) status.textContent = 'Submitting...';
+      fetch('/api/survey', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ features, feedback })
+      }).then(r => r.json()).then((res) => {
+        if (res && res.ok) {
+          if (status) status.textContent = 'Thanks for your feedback!';
+          setTimeout(closeModal, 600);
+          surveyForm.reset();
+        } else {
+          if (status) status.textContent = 'Something went wrong. Please try again later.';
+        }
+      }).catch(() => {
+        if (status) status.textContent = 'Network error. Please try again later.';
+      });
     });
   }
 

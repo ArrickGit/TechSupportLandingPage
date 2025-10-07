@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Elda Admin — Metrics</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px}
+      .kpi{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+      .kpi h3{margin:0 0 8px;font-size:16px;color:var(--muted)}
+      .kpi .value{font-size:32px;font-weight:800}
+      .grid{display:grid;grid-template-columns:1fr auto;gap:10px}
+      .table{margin-top:18px}
+      .table-row{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px;border-bottom:1px solid rgba(255,255,255,.06)}
+      .muted{color:var(--muted)}
+      @media(max-width:800px){.cards{grid-template-columns:1fr}}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="section-title">Elda — Metrics Dashboard</h1>
+      <p class="muted">Aggregated counts only; no emails or PII displayed.</p>
+      <div class="cards">
+        <div class="kpi"><h3>Waitlist signups</h3><div id="kpi-waitlist" class="value">–</div></div>
+        <div class="kpi"><h3>Preorders</h3><div id="kpi-preorder" class="value">–</div></div>
+        <div class="kpi"><h3>Total interest responses</h3><div id="kpi-interest" class="value">–</div></div>
+      </div>
+
+      <section class="table">
+        <h2 class="section-title">Interest breakdown</h2>
+        <div id="interest-rows"></div>
+      </section>
+
+      <section class="table">
+        <h2 class="section-title">Price preference</h2>
+        <div id="price-rows"></div>
+      </section>
+
+      <section class="table">
+        <h2 class="section-title">Top requested features</h2>
+        <div id="features-rows"></div>
+      </section>
+    </div>
+
+    <script>
+      fetch('/api/metrics')
+        .then(r=>r.json())
+        .then((m)=>{
+          if(!m || !m.ok){ throw new Error('metrics_failed'); }
+          document.getElementById('kpi-waitlist').textContent = m.waitlist_count ?? 0;
+          document.getElementById('kpi-preorder').textContent = m.preorder_count ?? 0;
+          const interestTotal = (m.interest_breakdown||[]).reduce((s,r)=>s+(r.count||0),0);
+          document.getElementById('kpi-interest').textContent = interestTotal;
+
+          const interestRows = (m.interest_breakdown||[])\
+            .map(r=>`<div class="table-row"><div>${r.interest}</div><div>${r.count}</div></div>`)\
+            .join('');
+          document.getElementById('interest-rows').innerHTML = interestRows || '<p class="muted">No data yet.</p>';
+
+          const priceRows = (m.price_breakdown||[])\
+            .map(r=>`<div class="table-row"><div>${r.price}</div><div>${r.count}</div></div>`)\
+            .join('');
+          document.getElementById('price-rows').innerHTML = priceRows || '<p class="muted">No data yet.</p>';
+
+          const featureRows = (m.survey_features||[])\
+            .map(r=>`<div class="table-row"><div>${r.feature}</div><div>${r.count}</div></div>`)\
+            .join('');
+          document.getElementById('features-rows').innerHTML = featureRows || '<p class="muted">No data yet.</p>';
+        })
+        .catch(()=>{
+          document.getElementById('kpi-waitlist').textContent = '–';
+        });
+    </script>
+  </body>
+  </html>
+
+
