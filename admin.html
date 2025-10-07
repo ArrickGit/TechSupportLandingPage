@@ -44,33 +44,43 @@
     </div>
 
     <script>
-      fetch('/api/metrics')
-        .then(r=>r.json())
-        .then((m)=>{
-          if(!m || !m.ok){ throw new Error('metrics_failed'); }
-          document.getElementById('kpi-waitlist').textContent = m.waitlist_count ?? 0;
-          document.getElementById('kpi-preorder').textContent = m.preorder_count ?? 0;
-          const interestTotal = (m.interest_breakdown||[]).reduce((s,r)=>s+(r.count||0),0);
-          document.getElementById('kpi-interest').textContent = interestTotal;
+      (function(){
+        const kWait = document.getElementById('kpi-waitlist');
+        const kPre = document.getElementById('kpi-preorder');
+        const kInterest = document.getElementById('kpi-interest');
+        const elInterest = document.getElementById('interest-rows');
+        const elPrice = document.getElementById('price-rows');
+        const elFeatures = document.getElementById('features-rows');
 
-          const interestRows = (m.interest_breakdown||[])\
-            .map(r=>`<div class="table-row"><div>${r.interest}</div><div>${r.count}</div></div>`)\
-            .join('');
-          document.getElementById('interest-rows').innerHTML = interestRows || '<p class="muted">No data yet.</p>';
+        fetch('/api/metrics', { cache: 'no-store' })
+          .then((r)=>{ if(!r.ok) throw new Error('http_'+r.status); return r.json(); })
+          .then((m)=>{
+            if(!m || !m.ok) throw new Error('metrics_failed');
+            kWait.textContent = m.waitlist_count ?? 0;
+            kPre.textContent = m.preorder_count ?? 0;
+            const interestTotal = (m.interest_breakdown||[]).reduce((s,r)=>s+(Number(r.count)||0),0);
+            kInterest.textContent = interestTotal;
 
-          const priceRows = (m.price_breakdown||[])\
-            .map(r=>`<div class="table-row"><div>${r.price}</div><div>${r.count}</div></div>`)\
-            .join('');
-          document.getElementById('price-rows').innerHTML = priceRows || '<p class="muted">No data yet.</p>';
+            const interestRows = (m.interest_breakdown||[])
+              .map((r)=>`<div class="table-row"><div>${r.interest}</div><div>${r.count}</div></div>`)
+              .join('');
+            elInterest.innerHTML = interestRows || '<p class="muted">No data yet.</p>';
 
-          const featureRows = (m.survey_features||[])\
-            .map(r=>`<div class="table-row"><div>${r.feature}</div><div>${r.count}</div></div>`)\
-            .join('');
-          document.getElementById('features-rows').innerHTML = featureRows || '<p class="muted">No data yet.</p>';
-        })
-        .catch(()=>{
-          document.getElementById('kpi-waitlist').textContent = '–';
-        });
+            const priceRows = (m.price_breakdown||[])
+              .map((r)=>`<div class="table-row"><div>${r.price}</div><div>${r.count}</div></div>`)
+              .join('');
+            elPrice.innerHTML = priceRows || '<p class="muted">No data yet.</p>';
+
+            const featureRows = (m.survey_features||[])
+              .map((r)=>`<div class="table-row"><div>${r.feature}</div><div>${r.count}</div></div>`)
+              .join('');
+            elFeatures.innerHTML = featureRows || '<p class="muted">No data yet.</p>';
+          })
+          .catch((err)=>{
+            console.error('Metrics load failed', err);
+            kWait.textContent = '–';
+          });
+      })();
     </script>
   </body>
   </html>
