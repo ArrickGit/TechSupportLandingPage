@@ -1,1 +1,2 @@
 {"ts": 1759827257, "iso": "2025-10-07T08:54:17Z", "path": "/api/waitlist", "ip": "127.0.0.1", "payload": {"email": "test@gmail.com"}, "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
+{"ts": 1759828111, "iso": "2025-10-07T09:08:31Z", "path": "/api/waitlist", "ip": "127.0.0.1", "payload": {"email": "test@gmail.com"}, "ua": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"}
