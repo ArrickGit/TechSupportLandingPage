@@ -60,6 +60,21 @@
         </div>
       </div>
 
+      <div class="dash-grid" style="margin-top:16px">
+        <div class="card">
+          <h3>Past conversations (last 7)</h3>
+          <div id="conv-list" class="muted" style="display:grid;gap:10px"></div>
+        </div>
+        <div class="card">
+          <h3>Past mood trend (14 days)</h3>
+          <canvas id="chart-mood" width="400" height="320"></canvas>
+          <div class="legend"><span class="dot activity" style="background:#f59e0b"></span> Mood score (1–5)</div>
+          <div class="muted" style="font-size:12px;margin-top:6px;line-height:1.4">
+            1 = very low/struggling, 2 = low, 3 = neutral/satisfied, 4 = positive/content, 5 = very happy
+          </div>
+        </div>
+      </div>
+
       <div class="dash-footer">
         <p class="muted">Demo only — values are simulated</p>
         <button id="toggle-speed" class="button button--small button--ghost">Speed: Normal</button>
