@@ -55,10 +55,10 @@ export default async function handler(req, res) {
     const interestDisplay = Array.from(interestMap.entries()).map(([interest, count]) => ({ interest, count }));
 
     const baselinePrices = [
-      { price: '<199', count: 58 },
-      { price: '199-299', count: 10 },
-      { price: '299-399', count: 6 },
-      { price: '>=399', count: 6 },
+      { price: '<200', count: 60 },
+      { price: '200-299', count: 12 },
+      { price: '300-399', count: 8 },
+      { price: '400+', count: 6 },
     ];
     const priceMap = new Map(baselinePrices.map((item) => [item.price, item.count]));
     priceRows.forEach((row) => {
