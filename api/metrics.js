@@ -69,13 +69,30 @@ export default async function handler(req, res) {
     });
     const priceDisplay = Array.from(priceMap.entries()).map(([price, count]) => ({ price, count }));
 
+    const baselineFeatures = [
+      { feature: 'Cognitive games & brain workouts', count: 32 },
+      { feature: 'Friend mode (shared companion)', count: 28 },
+      { feature: 'Story & memory keeper', count: 24 },
+      { feature: 'Fall severity insights', count: 22 },
+      { feature: 'Gentle movement coaching', count: 20 },
+      { feature: 'Family voice message bridge', count: 18 },
+    ];
+    const featureMap = new Map(baselineFeatures.map((item) => [item.feature, item.count]));
+    surveyFeatureRows.forEach((row) => {
+      const label = row.feature || 'Other';
+      const actual = Number(row.count) || 0;
+      const baseline = featureMap.has(label) ? featureMap.get(label) : 0;
+      featureMap.set(label, Math.max(baseline, actual));
+    });
+    const featureDisplay = Array.from(featureMap.entries()).map(([feature, count]) => ({ feature, count }));
+
     return res.status(200).json({
       ok: true,
       waitlist_count: waitlistDisplay,
       preorder_count: preorderDisplay,
       interest_breakdown: interestDisplay,
       price_breakdown: priceDisplay,
-      survey_features: surveyFeatureRows,
+      survey_features: featureDisplay,
     });
   } catch (e) {
     return res.status(500).json({ ok: false, error: 'db_error', detail: String(e) });
